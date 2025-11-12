@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Child Tracker App - Features</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ... CSS STYLES REMAINS THE SAME ... */
+        :root {
+            /* Using the same colors for consistency as index.php */
+            --primary-pink: #f8e5e8;
+            --secondary-pink: #ffc0cb;
+            --dark-pink: #e07f91;
+            --text-color: #5d5d5d;
+            --white: #ffffff;
+            --circle-border: #f0a5af;
+            --app-bg: #f5f5f5;
+        }
+        /* (All other CSS remains here) */
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--app-bg);
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--white);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+
+        /* Top Bar Styling - Exact Match */
+        .top-bar {
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-pink);
+            flex-shrink: 0;
+        }
+        .icon-link {
+            width: 28px;
+            height: 28px;
+            color: var(--dark-pink);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .tab-bar {
+            display: inline-flex;
+            background-color: var(--dark-pink);
+            border-radius: 20px;
+            padding: 4px;
+        }
+        .tab {
+            padding: 6px 20px;
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .tab.active {
+            background-color: var(--white);
+            color: var(--dark-pink);
+        }
+
+        /* WEEK TRACKER SECTION (COPIED FROM INDEX.PHP) */
+        .week-tracker {
+            text-align: center;
+            background-color: var(--primary-pink);
+            padding: 40px 20px; 
+            position: relative;
+            z-index: 10;
+            border-bottom-left-radius: 50% 10%;
+            border-bottom-right-radius: 50% 10%;
+            box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .week-circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+            gap: 80px; 
+            flex-wrap: wrap;
+        }
+
+        .stat-left, .stat-right {
+            color: var(--dark-pink);
+            font-size: 16px;
+            text-transform: uppercase;
+            line-height: 1.2;
+            flex-basis: auto; 
+            white-space: nowrap;
+        }
+
+        .stat-left strong, .stat-right strong {
+            display: block;
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        .week-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 10px solid var(--secondary-pink);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--white);
+            box-shadow: 0 0 0 10px var(--white), 0 0 0 13px var(--circle-border);
+            color: var(--dark-pink);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .week-number {
+            font-size: 90px;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .week-days {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .trimester {
+            display: block;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            text-decoration: none;
+            border-bottom: 2px solid var(--dark-pink);
+            width: fit-content;
+            margin-inline: auto;
+        }
+
+        /* INFO CARD STYLING */
+        .main-content {
+            padding: 20px 0; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .info-card-base {
+            background-color: var(--white);
+            padding: 20px 25px;
+            border-radius: 20px;
+            color: var(--text-color);
+            margin-bottom: 20px; 
+            width: 90%;
+            max-width: 1100px;
+            margin-inline: auto;
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--primary-pink); 
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .info-card-base:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header-small {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 2px;
+        }
+        .card-text-small {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.3;
+        }
+        .card-action-link {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            flex-shrink: 0;
+            margin-left: auto;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <script>
+            // Populate Week Tracker Data for Baby
+            document.addEventListener('DOMContentLoaded', () => {
+                            });
+        </script>
+
+        <div class="top-bar">
+            <a href="settings.php?lang=en" class="icon-link" title="Settings">
+                </a>
+
+            <div class="tab-bar">
+                <a href="5index.php?lang=en" class="tab">Pregnancy</a>
+                <a href="child.php?lang=en" class="tab active">Child</a> 
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <a href="stats.php?lang=en" class="icon-link" title="Stats">
+                    </a>
+                <a href="mail.php?lang=en" class="icon-link" title="Mailbox">
+                    </a>
+            </div>
+        </div>
+
+        <div class="week-tracker">
+                        <div style="text-align: center; padding: 40px; color: var(--dark-pink);">
+                <h3>No Baby Data Found</h3>
+                <p>Please record your baby's delivery details first.</p>
+                <a href="baby_delivery.php?lang=en" class="trimester">Add Baby Details</a>
+            </div>
+                    </div>
+        
+        <div class="main-content-wrapper">
+            <div class="main-content" style="padding-top: 20px;">
+                
+                <div class="info-card-base" onclick="location.href='growth.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Baby Growth Tracking</div>
+                        <div class="card-text-small">Track your baby's development milestones and growth.</div>
+                    </div>
+                    <a href="growth.php?lang=en" class="card-action-link">VIEW</a>
+                </div>
+
+                <div class="info-card-base" onclick="location.href='movements.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Daily Activities Log</div>
+                        <div class="card-text-small">Record your baby's daily activities and milestones.</div>
+                    </div>
+                    <a href="movements.php?lang=en" class="card-action-link">LOG NOW</a>
+                </div>
+
+                <div class="info-card-base" onclick="location.href='gallery.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Baby Photo Gallery</div>
+                        <div class="card-text-small">Upload and view your baby's precious moments.</div>
+                    </div>
+                    <a href="gallery.php?lang=en" class="card-action-link">OPEN</a>
+                </div>
+
+                <div class="info-card-base" onclick="location.href='bonding.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Parent-Baby Bonding</div>
+                        <div class="card-text-small">Activities to strengthen your bond with your baby.</div>
+                    </div>
+                    <a href="bonding.php?lang=en" class="card-action-link">START</a>
+                </div>
+
+                <div class="info-card-base" onclick="location.href='health-insights.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Baby Health & Care</div>
+                        <div class="card-text-small">Tips on baby care, feeding, and health monitoring.</div>
+                    </div>
+                    <a href="health-insights.php?lang=en" class="card-action-link">READ</a>
+                </div>
+
+                <div class="info-card-base" onclick="location.href='delivery-prep.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Post-Birth Care</div>
+                        <div class="card-text-small">Postpartum care, recovery tips, and newborn essentials.</div>
+                    </div>
+                    <a href="delivery-prep.php?lang=en" class="card-action-link">CHECKLIST</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+        
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<style>
+/* --- General Reset & Layout --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Footer --- */
+.large-app-footer {
+    background-color: #FFC0CB;
+    color: #494f2fff;
+    padding: 60px 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
+.footer-column {
+    min-width: 150px;
+    max-width: 280px;
+    flex-basis: auto;
+}
+
+.footer-column:first-child {
+    max-width: 350px;
+}
+
+.footer-heading {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2F4F4F;
+}
+
+.footer-link,
+.footer-brand {
+    color: #2F4F4F;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: #000;
+}
+
+/* --- JANANI Brand --- */
+.janani-brand-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+
+.srs-logo-placeholder {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2F4F4F;
+    margin-bottom: 5px;
+}
+
+.srs-logo-img {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.footer-brand-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #2F4F4F;
+    margin-top: 5px;
+}
+
+/* --- Social Icons --- */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.social-icons a {
+    font-size: 24px;
+    color: #2F4F4F;
+    transition: color 0.2s;
+}
+
+.social-icons a:hover {
+    color: #000;
+}
+
+/* --- App Download Buttons --- */
+.app-download-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.app-download-buttons img {
+    width: 130px;
+    height: auto;
+}
+
+/* --- Region Dropdown --- */
+.region-select-wrapper {
+    margin-top: 15px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    gap: 8px;
+    border: 1px solid #2F4F4F;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.region-select-wrapper i {
+    font-size: 1.2rem;
+}
+
+.language-selector {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    .large-app-footer {
+        padding: 50px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .large-app-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 40px 20px;
+        gap: 30px;
+    }
+    .footer-column {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
+</style>
+
+<footer class="large-app-footer">
+    <div class="footer-column">
+        <div class="janani-brand-container">
+                            <div class="srs-logo-placeholder">SRS</div>
+            
+            <a href="index.php?lang=en" class="footer-brand-text">
+                JANANI            </a>
+        </div>
+    </div>
+
+    <div class="footer-column">
+        <h4 class="footer-heading">popular_articles</h4>
+        <a href="articles.php?lang=en" class="footer-link">
+            What can I do if I am afraid to give birth?        </a>
+    </div>
+
+    <div class="footer-column">
+        <h4 class="footer-heading">company</h4>
+        <a href="about_us.php?lang=en" class="footer-link">About us</a>
+        <a href="our_experts.php?lang=en" class="footer-link">Our experts</a>
+        <a href="support_faq.php?lang=en" class="footer-link">FAQ</a>
+        <a href="contact_us.php?lang=en" class="footer-link">Contact</a>
+    </div>
+
+    <div class="footer-column">
+
+
+        <div class="region-select-wrapper">
+            <i class='bx bx-globe'></i>
+            <span>EN</span>
+            <select id="language-switcher-footer" class="language-selector" onchange="window.location.href = this.value;">
+                                    <option value="?lang=en" selected>
+                        EN                    </option>
+                                    <option value="?lang=hi" >
+                        HI                    </option>
+                                    <option value="?lang=gu" >
+                        GU                    </option>
+                            </select>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

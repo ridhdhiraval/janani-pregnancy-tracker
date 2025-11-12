@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pregnancy Tracker App - Full Desktop View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Define the primary colors */
+        :root {
+            --primary-pink: #f8e5e8; /* Light background pink (Week Tracker) */
+            --secondary-pink: #ffc0cb; /* Medium pink for accents/dividers */
+            --dark-pink: #e07f91; /* Darker pink for text/buttons */
+            --text-color: #5d5d5d; /* Dark gray for general text */
+            --white: #ffffff;
+            --circle-border: #f0a5af; /* Border for the main circle */
+            --app-bg: #f5f5f5; /* Light grey background for the page */
+        }
+
+        /* Reset + Body */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--app-bg);
+            min-height: 100vh;
+        }
+
+        /* Full screen container (Desktop size) */
+        .app-container {
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--white);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+
+        /* Top bar */
+         .top-bar {
+         padding: 15px 40px;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         background-color: var(--primary-pink);
+         flex-shrink: 0;
+         position: relative; /* <--- ADDED: Needed for absolute positioning of the tab bar */
+        }
+
+        /* Group for Left Icons (Settings + Language) */
+        .top-bar .left-icons-group {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between icons/dropdown */
+        }
+        
+        /* Language Dropdown Styling */
+        .language-dropdown-container {
+            display: flex; 
+            align-items: center;
+        }
+        
+        .language-dropdown-container select {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid var(--secondary-pink);
+            background-color: var(--primary-pink);
+            color: var(--dark-pink);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+        }
+        /* End Language Dropdown Styling */
+        
+        /* Icon Styling */
+        .top-bar .icon-link {
+            width: 28px;
+            height: 28px;
+            color: var(--dark-pink);
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .top-bar .icon-link:hover {
+            color: #b05f6f;
+        }
+        .top-bar .icon-link span {
+            display: block; 
+        }
+
+
+        .tab-bar {
+            display: inline-flex;
+            background-color: var(--dark-pink);
+            border-radius: 20px;
+            padding: 4px;
+        }
+
+        .tab {
+            padding: 6px 20px;
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background-color: var(--white);
+            color: var(--dark-pink);
+        }
+
+        /* --- WEEK TRACKER SECTION (PINK BACKGROUND) --- */
+        .week-tracker {
+            text-align: center;
+            background-color: var(--primary-pink);
+            padding: 30px 20px 40px; 
+            position: relative;
+            z-index: 10;
+            border-bottom-left-radius: 50% 10%;
+            border-bottom-right-radius: 50% 10%;
+            box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .week-circle-container {
+            display: flex;
+            align-items: center;
+            margin: 5px auto;
+            gap: 80px;
+            flex-wrap: wrap;
+        }
+
+        .stat-left,
+        .stat-right {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 18px;
+            color: var(--dark-pink);
+            font-weight: 500;
+        }
+
+        .stat-left strong,
+        .stat-right strong {
+            display: block;
+            font-size: 40px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .week-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 10px solid var(--secondary-pink);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--white);
+            box-shadow: 0 0 0 10px var(--white), 0 0 0 13px var(--circle-border);
+            color: var(--dark-pink);
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .week-number {
+            font-size: 80px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .week-days {
+            font-size: 20px;
+            margin-top: 5px;
+        }
+
+        .trimester {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            margin-top: 35px; 
+            text-decoration: underline;
+            display: block; 
+            width: fit-content;
+            margin-inline: auto;
+        }
+
+        /* --- Main Content --- */
+        .main-content-wrapper {
+            background-color: var(--white);
+            position: relative;
+            z-index: 20;
+            margin-top: 0;
+        }
+        
+        .main-content {
+            padding: 40px 60px 100px;
+            flex-grow: 1;
+            position: relative;
+            z-index: 30;
+        }
+
+        .content-header {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .topic-icons {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .topic-icon-item {
+            text-align: center;
+            color: var(--dark-pink);
+            cursor: pointer; 
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            padding: 10px;
+            border-radius: 20px;
+            min-width: 140px; 
+        }
+
+        .topic-icon-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-icon-item:active {
+            transform: scale(0.95);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-icon-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--secondary-pink);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            margin-bottom: 10px;
+            background-color: var(--white);
+        }
+        .topic-icon-circle svg {
+            width: 50px;
+            height: 50px;
+        }
+
+
+        .topic-icon-label {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Enlarged Action Card */
+        .action-card {
+            background-color: var(--primary-pink);
+            padding: 40px 50px;
+            border-radius: 20px;
+            color: var(--dark-pink);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            width: 90%;
+            max-width: 1100px;
+            margin-inline: auto;
+            
+            /* ADDED Doodles/Illustration Background */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Cpath d='M40 70 A30 30 0 0 1 110 70 L75 110 Z' fill='none' stroke='%23ffccd6' stroke-width='2' opacity='0.7'/%3E%3Ccircle cx='75' cy='75' r='5' fill='%23ffccd6' opacity='0.4'/%3E%3C/svg%3E");
+            background-size: 150px 150px;
+            background-repeat: repeat;
+            background-position: center;
+        }
+
+        .card-header {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-text {
+            font-size: 20px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            max-width: 80%;
+        }
+
+        .continue-link {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .continue-link::after {
+            content: ">";
+            margin-left: 10px;
+            font-size: 24px;
+        }
+
+        .card-illustration {
+            position: absolute;
+            top: 15px;
+            right: 40px;
+            font-size: 100px;
+            opacity: 0.3;
+            color: var(--dark-pink);
+        }
+        .card-illustration svg {
+            width: 100px;
+            height: 100px;
+        }
+        
+        /* --- Checklist/Article Card Styling (Common base) --- */
+        .info-card-base {
+            background-color: var(--white);
+            padding: 20px 25px;
+            border-radius: 20px;
+            color: var(--text-color);
+            margin-bottom: 20px; 
+            width: 90%;
+            max-width: 1100px;
+            margin-inline: auto;
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--primary-pink); 
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .info-card-base:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon-container {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            margin-right: 15px;
+            background-color: var(--primary-pink); 
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .card-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding-right: 15px; 
+        }
+
+        .card-header-small {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-color);
+            margin-bottom: 2px;
+        }
+        
+        .card-text-small {
+            font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.3;
+        }
+
+        /* Specific Checklist Styling */
+        .checklist-card .card-content-wrapper {
+            padding-bottom: 0px; 
+        }
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background-color: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px; 
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%; 
+            background-color: var(--dark-pink);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        
+        .checklist-progress-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            align-self: flex-end; 
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+        /* End Specific Checklist Styling */
+        
+        /* Specific Article Styling */
+        .article-link-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--dark-pink);
+            align-self: flex-end; 
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+
+        /* Tools button */
+        .tools-button {
+            background-color: var(--secondary-pink);
+            padding: 25px 30px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1100px;
+            margin: 20px auto 40px; 
+            transition: background-color 0.2s;
+        }
+        .tools-button:hover {
+            background-color: #f7b3c0; 
+        }
+        
+        .tools-button-text {
+            line-height: 1; 
+        }
+
+        .tools-button-icon {
+            display: flex;
+            align-items: center;
+            color: var(--dark-pink); 
+        }
+
+        .tools-button-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        
+        <script>
+            // --- Icon Definitions (SVG Paths/Images) ---
+            const ICON_SVGS = {
+                settings: '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0,0,256,256"><g fill="#fc8eac" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(10.66667,10.66667)"><path d="M9.66602,2l-0.49023,2.52344c-0.82417,0.31082 -1.58099,0.74649 -2.24414,1.29102l-2.42383,-0.83594l-2.33594,4.04297l1.94141,1.6875c-0.07463,0.45823 -0.11328,0.88286 -0.11328,1.29102c0,0.40877 0.03981,0.83263 0.11328,1.29102v0.00195l-1.94141,1.6875l2.33594,4.04102l2.42188,-0.83398c0.66321,0.54482 1.42175,0.97807 2.24609,1.28906l0.49023,2.52344h4.66797l0.49024,-2.52344c0.82471,-0.31102 1.58068,-0.74599 2.24414,-1.29102l2.42383,0.83594l2.33398,-4.04102l-1.93945,-1.68945c0.07463,-0.45823 0.11328,-0.88286 0.11328,-1.29102c0,-0.40754 -0.03887,-0.83163 -0.11328,-1.28906v-0.00195l1.94141,-1.68945l-2.33594,-4.04102l-2.42188,0.83398c-0.66321,-0.54482 -1.42175,-0.97807 -2.24609,-1.28906l-0.49024,-2.52344zM11.31445,4h1.37109l0.38867,2l1.04297,0.39453c0.62866,0.23694 1.19348,0.56222 1.68359,0.96484l0.86328,0.70703l1.92188,-0.66016l0.68555,1.18555l-1.53516,1.33594l0.17578,1.09961v0.00195c0.06115,0.37494 0.08789,0.68947 0.08789,0.9707c0,0.28123 -0.02674,0.59572 -0.08789,0.9707l-0.17773,1.09961l1.53516,1.33594l-0.68555,1.1875l-1.91992,-0.66211l-0.86523,0.70898c-0.49011,0.40262 -1.05298,0.7279 -1.68164,0.96484h-0.00195l-1.04297,0.39453l-0.38867,2h-1.36914l-0.38867,-2l-1.04297,-0.39453c-0.62867,-0.23694 -1.19348,-0.56222 -1.68359,-0.96484l-0.86328,-0.70703l-1.92187,0.66016l-0.68555,-1.18555l1.53711,-1.33789l-0.17773,-1.0957v-0.00195c-0.06027,-0.37657 -0.08789,-0.69198 -0.08789,-0.97266c0,-0.28123 0.02674,-0.59572 0.08789,-0.9707l0.17773,-1.09961l-1.53711,-1.33594l0.68555,-1.1875l1.92188,0.66211l0.86328,-0.70898c0.49011,-0.40262 1.05493,-0.7279 1.68359,-0.96484l1.04297,-0.39453zM12,8c-2.19652,0 -4,1.80348 -4,4c0,2.19652 1.80348,4 4,4c2.19652,0 4,-1.80348 4,-4c0,-2.19652 -1.80348,-4 -4,-4zM12,10c1.11148,0 2,0.88852 2,2c0,1.11148 -0.88852,2 -2,2c-1.11148,0 -2,-0.88852 -2,-2c0,-1.11148 0.88852,-2 2,-2z"></path></g></g></svg>',
+                alert:'<img width="34" height="34" src="https://img.icons8.com/pastel-glyph/64/e07f91/loudspeaker--v2.png" alt="loudspeaker--v2"/>',
+                stats: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-3"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>',
+                user: '<img width="35" height="35" src="https://img.icons8.com/pulsar-line/48/e07f91/login-rounded-right.png" alt="login-rounded-right"/>',
+                profile: '<img src="images/profile-icon.png" alt="Profile" width="35" height="35">',
+                
+                // Topic Icons (Main Content)
+                baby: '<img src="https://img.icons8.com/color/48/fetus.png" width="60" height="60" style="filter: invert(67%) sepia(452%) saturate(452%) hue-rotate(310deg) brightness(90%) contrast(90%);" alt="Baby Fetus"/>',
+                mother: '<img width="50" height="50" src="https://img.icons8.com/ios-filled/50/E75480/mother.png" alt="mother"/>',
+                partner: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+
+                // Action Card Illustration
+                celebration: '<img width="70" height="70" src="https://img.icons8.com/office/40/gift--v1.png" alt="gift--v1"/>',
+
+                // Wrench icon for Tools
+                tools: '<img width="25" height="25" src="https://img.icons8.com/parakeet-line/50/FA5252/maintenance.png" alt="maintenance"/>',
+                
+                // Article Icon
+                articles_card_icon: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--dark-pink);"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M10 8h6"/><path d="M10 12h6"/></svg>',
+
+                // Checklist icon
+                checklist_icon: '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--dark-pink);"><path d="m3 12 2 2 4-4"/><path d="M12 6h9"/><path d="M12 12h9"/><path d="M12 18h9"/></svg>'
+            };
+
+            // Utility function to get the correct icon SVG
+            function getIcon(name) {
+                return ICON_SVGS[name] || '<span style="font-size: 20px;">?</span>'; // Fallback
+            }
+
+            // Data used to populate the main tracker
+            const appData = {
+                week_number: 0,
+                days_to_go: 280,
+                percent_done: 0,
+                checklist_percent: 0,
+                progress_width: 0,
+            };
+
+            // Function to update the DOM based on appData
+            document.addEventListener('DOMContentLoaded', () => {
+                // --- Language Switch Logic (NEW) ---
+                const langSelect = document.getElementById('language-select');
+                if (langSelect) {
+                    langSelect.addEventListener('change', function() {
+                        // Get the current URL without parameters
+                        const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                        // Reload the page with the selected language parameter
+                        window.location.href = baseUrl + '?lang=' + this.value;
+                    });
+                }
+                // --- End Language Switch Logic ---
+
+
+                // Top Bar Icons
+                document.getElementById('settings-icon').innerHTML = getIcon('settings');
+                document.getElementById('alert-icon').innerHTML = getIcon('alert');           
+                document.getElementById('stats-icon').innerHTML = getIcon('stats');
+                
+                // Show signin or profile icon based on login status
+                                document.getElementById('signin-icon').innerHTML = getIcon('user');
+                
+                // Main Content Icons
+                document.getElementById('icon-baby').innerHTML = getIcon('baby');
+                document.getElementById('icon-mother').innerHTML = getIcon('mother');
+                document.getElementById('icon-partner').innerHTML = getIcon('partner');
+                
+                // Action Card Illustration
+                document.getElementById('card-illustration').innerHTML = getIcon('celebration');
+
+                // Tools Button Icon
+                document.getElementById('tools-button-icon').innerHTML = getIcon('tools');
+                
+                // Articles Card Icon
+                document.getElementById('article-icon-container').innerHTML = getIcon('articles_card_icon');
+            });
+        </script>
+
+
+<div class="top-bar">
+    <div class="left-icons-group">
+        <a href="7settings.php?lang=en" class="icon-link" title="Open Settings">
+            <span id="settings-icon"></span>
+        </a>
+        <a href="10trimster.php?lang=en" class="trimster-link">
+        </a>    
+        <a href="7settings.php?lang=en" class="trimster-link">
+        </a>              
+          
+        <div class="language-dropdown-container">
+            <select id="language-select" name="language">
+                <option value="en" selected>English</option><option value="hi" >Hindi (हिंदी)</option><option value="gu" >Gujarati (ગુજરાતી)</option>            </select>
+        </div>
+        </div>
+
+    <div class="tab-bar">
+        <a href="index.php?lang=en" class="tab active">Pregnancy</a>
+        <a href="6child.php?lang=en" class="tab">Child</a> 
+    </div>
+    
+    <div style="display: flex; gap: 10px;">
+        <a href="alert.php?lang=en" class="icon-link" title="Open Alerts">
+            <span id="alert-icon"></span>
+        </a>
+
+        <a href="8activity.php?lang=en" class="icon-link" title="View Charts and Statistics">
+            <span id="stats-icon"></span>
+        </a>
+                <a href="1signinsignup.php?lang=en" class="icon-link" title="Sign In / Sign Up">
+            <span id="signin-icon"></span>
+        </a>
+            </div>
+</div>
+        <div class="week-tracker">
+            <div class="week-circle-container">
+                <div class="stat-left">
+                    <strong id="percent-done">0%</strong> COMPLETE                </div>
+                <div class="week-circle">
+                    <div class="week-number" style="font-size: 80px; font-weight: bold; line-height: 0.9;">0</div>
+                    <div class="week-days" style="font-size: 24px; margin-top: 5px;">Week</div>
+                </div>
+                <div class="stat-right">
+                    <strong id="days-to-go">280</strong> DAYS TO GO                </div>
+            </div>
+            <a href="10trimester.php?lang=en" class="trimester">
+                Trimester 1            </a>
+        </div>
+        
+        <div class="main-content-wrapper">
+            <div class="main-content">
+                <div class="content-header">What's happening this week?</div>
+
+                <div class="topic-icons">
+                    <div class="topic-icon-item" onclick="location.href='baby-info.php?lang=en'">
+                        <div class="topic-icon-circle"><span id="icon-baby"></span></div>
+                        <div class="topic-icon-label">BABY</div>
+                    </div>
+                    <div class="topic-icon-item" onclick="location.href='mother-info.php?lang=en'">
+                        <div class="topic-icon-circle"><span id="icon-mother"></span></div>
+                        <div class="topic-icon-label">MOTHER</div>
+                    </div>
+                    <div class="topic-icon-item" onclick="location.href='#partner-info?lang=en'">
+                        <div class="topic-icon-circle"><span id="icon-partner"></span></div>
+                        <div class="topic-icon-label">PARTNER</div>
+                    </div>
+                </div>
+
+                <div class="action-card" onclick="location.href='fruit_details.php?lang=en'">
+                    <div class="card-header">MY BABBY'S SIZE</div>
+                    <div class="card-text">
+                        Find out your baby's size by clicking the box.                    </div>
+                    <a href="fruit_details.php?lang=en" class="continue-link">OPEN NOW</a>
+                    <span class="card-illustration">
+                                                    <span id="card-illustration"></span>
+                                            </span>
+                </div>
+                
+                <div class="tools-button" onclick="location.href='tools-page.php?lang=en'">
+                    <span class="tools-button-text">Tap here to find your tools</span>
+                    <span class="tools-button-icon" id="tools-button-icon"></span>
+                </div>
+                
+                <div class="checklist-card info-card-base" onclick="location.href='checklist.php?lang=en'">
+                    <div class="card-icon-container">
+                        <span id="checklist-icon-card">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--dark-pink);">
+                                 <path d="m3 12 2 2 4-4"/>
+                                 <path d="M12 6h9"/>
+                                 <path d="M12 12h9"/>
+                                 <path d="M12 18h9"/>
+                             </svg>
+                           </span>
+                    </div>
+                    <div class="card-content-wrapper checklist-content-wrapper">
+                        <div class="card-header-small">Checklist</div>
+                        <div class="card-text-small">0% of your checklist is completed</div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="checklist-progress-text">0%</div>
+                </div>
+                
+                <div class="article-card info-card-base" onclick="location.href='articles.php?lang=en'">
+                    <div class="card-icon-container" id="article-icon-container">
+                        </div>
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Articles</div>
+                        <div class="card-text-small">Find weekly articles about pregnancy, baby and mother health.</div>
+                    </div>
+                    <div class="article-link-text">READ NOW</div>
+                </div>
+                
+                <div class="info-card-base" onclick="location.href='baby_delivery.php?lang=en'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Had Your Baby?</div>
+                        <div class="card-text-small">Log your baby's birth details to switch to post-birth tracking.</div>
+                    </div>
+                    <div class="article-link-text">LOG DELIVERY</div>
+                </div>
+                </div>
+        </div>
+    </div>
+    <!-- Emergency top-bar alert script: paste after your existing JS, before </body> -->
+<script>
+// --- Emergency alert trigger for top-bar alert icon ---
+// Runs after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Create hidden audio element for beep (if not present)
+  if (!document.getElementById('jananiBeep')) {
+    const audio = document.createElement('audio');
+    audio.id = 'jananiBeep';
+    audio.src = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg';
+    audio.preload = 'auto';
+    document.body.appendChild(audio);
+  }
+  const beep = document.getElementById('jananiBeep');
+
+  // small toast helper
+  function showToast(msg, timeout = 4000) {
+    const t = document.createElement('div');
+    t.innerHTML = msg;
+    Object.assign(t.style, {
+      position: 'fixed',
+      right: '20px',
+      bottom: '20px',
+      background: '#fff',
+      color: '#111',
+      padding: '10px 14px',
+      borderRadius: '8px',
+      boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+      zIndex: 999999,
+      fontFamily: 'Inter, sans-serif'
+    });
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), timeout);
+  }
+
+  // find the icon wrapper (set by your PHP script earlier)
+  const alertIconSpan = document.querySelector('#alert-icon');
+  if (!alertIconSpan) {
+    console.warn('Alert icon (#alert-icon) not found. Add <span id="alert-icon"></span> in top bar.');
+    return;
+  }
+  // find anchor parent if exists
+  const anchor = alertIconSpan.closest('a');
+
+  // attach click listener (prevent default link)
+  const clickTarget = anchor || alertIconSpan;
+  clickTarget.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    triggerEmergencyAlert();
+  });
+
+  // Main function
+  function triggerEmergencyAlert() {
+    // confirmation to avoid accidental triggers
+    if (!confirm('Send EMERGENCY alert now?')) return;
+
+    // start local alert: beep + flashing
+    try { beep.loop = true; beep.play().catch(()=>{}); } catch(e){}
+
+    const flashInterval = setInterval(() => {
+      document.body.style.backgroundColor =
+        document.body.style.backgroundColor === 'red' ? '' : 'red';
+    }, 350);
+
+    function stopLocalEffects() {
+      clearInterval(flashInterval);
+      document.body.style.backgroundColor = '';
+      try { beep.pause(); beep.currentTime = 0; } catch(e){}
+    }
+
+    // show message
+    showToast('Fetching GPS — allow location permission');
+
+    if (!navigator.geolocation) {
+      stopLocalEffects();
+      alert('Geolocation not supported on this device.');
+      return;
+    }
+
+    const now = new Date();
+    const date = now.toLocaleDateString();
+    const time = now.toLocaleTimeString();
+
+    // Acquire location
+    navigator.geolocation.getCurrentPosition((position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const mapLink = `https://maps.google.com/?q=${lat},${lon}`;
+
+      // Build payload. Include logged-in PHP user id if available
+      const payload = {
+        source: 'janani_web',
+        date: date,
+        time: time,
+        latitude: lat,
+        longitude: lon,
+        user_id: null,
+        user_name: "" 
+      };
+
+      // POST to backend
+      fetch('send_alert.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(res => {
+        stopLocalEffects();
+        if (res && res.status === 'success') {
+          showToast('Alert sent ✅');
+          // Optionally show details
+          alert('Alert sent to contacts.\n\nDate: ' + date + '\nTime: ' + time + '\nLocation: ' + mapLink);
+        } else {
+          console.error('send_alert error', res);
+          showToast('Failed to send alert — check console', 6000);
+          alert('Failed to send alert: ' + (res.message || JSON.stringify(res)));
+        }
+      })
+      .catch(err => {
+        stopLocalEffects();
+        console.error(err);
+        showToast('Network error while sending alert', 6000);
+        alert('Network error: ' + (err.message || err));
+      });
+
+    }, (err) => {
+      stopLocalEffects();
+      alert('Unable to access location. Please enable GPS and try again.');
+    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+  }
+
+});
+</script>
+
+    
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+<style>
+/* --- General Reset & Layout --- */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Footer --- */
+.large-app-footer {
+    background-color: #FFC0CB;
+    color: #494f2fff;
+    padding: 60px 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 1.6;
+}
+
+.footer-column {
+    min-width: 150px;
+    max-width: 280px;
+    flex-basis: auto;
+}
+
+.footer-column:first-child {
+    max-width: 350px;
+}
+
+.footer-heading {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #2F4F4F;
+}
+
+.footer-link,
+.footer-brand {
+    color: #2F4F4F;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: #000;
+}
+
+/* --- JANANI Brand --- */
+.janani-brand-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+
+.srs-logo-placeholder {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2F4F4F;
+    margin-bottom: 5px;
+}
+
+.srs-logo-img {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.footer-brand-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #2F4F4F;
+    margin-top: 5px;
+}
+
+/* --- Social Icons --- */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.social-icons a {
+    font-size: 24px;
+    color: #2F4F4F;
+    transition: color 0.2s;
+}
+
+.social-icons a:hover {
+    color: #000;
+}
+
+/* --- App Download Buttons --- */
+.app-download-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.app-download-buttons img {
+    width: 130px;
+    height: auto;
+}
+
+/* --- Region Dropdown --- */
+.region-select-wrapper {
+    margin-top: 15px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    gap: 8px;
+    border: 1px solid #2F4F4F;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.region-select-wrapper i {
+    font-size: 1.2rem;
+}
+
+.language-selector {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    .large-app-footer {
+        padding: 50px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .large-app-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 40px 20px;
+        gap: 30px;
+    }
+    .footer-column {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
+</style>
+
+<footer class="large-app-footer">
+    <div class="footer-column">
+        <div class="janani-brand-container">
+                            <div class="srs-logo-placeholder">SRS</div>
+            
+            <a href="index.php?lang=en" class="footer-brand-text">
+                JANANI            </a>
+        </div>
+    </div>
+
+    <div class="footer-column">
+        <h4 class="footer-heading">popular_articles</h4>
+        <a href="articles.php?lang=en" class="footer-link">
+            What can I do if I am afraid to give birth?        </a>
+    </div>
+
+    <div class="footer-column">
+        <h4 class="footer-heading">company</h4>
+        <a href="about_us.php?lang=en" class="footer-link">About us</a>
+        <a href="our_experts.php?lang=en" class="footer-link">Our experts</a>
+        <a href="support_faq.php?lang=en" class="footer-link">FAQ</a>
+        <a href="contact_us.php?lang=en" class="footer-link">Contact</a>
+    </div>
+
+    <div class="footer-column">
+
+
+        <div class="region-select-wrapper">
+            <i class='bx bx-globe'></i>
+            <span>EN</span>
+            <select id="language-switcher-footer" class="language-selector" onchange="window.location.href = this.value;">
+                                    <option value="?lang=en" selected>
+                        EN                    </option>
+                                    <option value="?lang=hi" >
+                        HI                    </option>
+                                    <option value="?lang=gu" >
+                        GU                    </option>
+                            </select>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
