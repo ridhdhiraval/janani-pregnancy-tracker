@@ -820,7 +820,7 @@ foreach ($translations as $code => $data) {
                         <div class="topic-icon-circle"><span id="icon-mother"></span></div>
                         <div class="topic-icon-label"><?php echo t('topic_mother'); ?></div>
                     </div>
-                    <div class="topic-icon-item" onclick="location.href='#partner-info?lang=<?php echo $current_lang; ?>'">
+                    <div class="topic-icon-item" onclick="location.href='partner-panel.php?lang=<?php echo $current_lang; ?>'">
                         <div class="topic-icon-circle"><span id="icon-partner"></span></div>
                         <div class="topic-icon-label"><?php echo t('topic_partner'); ?></div>
                     </div>
@@ -876,15 +876,33 @@ foreach ($translations as $code => $data) {
                     </div>
                     <div class="article-link-text"><?php echo t('card_link_read'); ?></div>
                 </div>
+                <div class="info-card-base" onclick="location.href='my_doctor_details.php?lang=<?php echo $current_lang; ?>'">
+                    <div class="card-icon-container">
+                        <img width="28" height="28" src="https://img.icons8.com/ios-filled/50/e07f91/doctor-male.png" alt="doctor"/>
+                    </div>
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">My Doctor</div>
+                        <div class="card-text-small">View doctors, appointments, notes, prescriptions and reports.</div>
+                    </div>
+                    <div class="article-link-text">OPEN</div>
+                </div>
                 
-                <div class="info-card-base" onclick="location.href='baby_delivery.php?lang=<?php echo $current_lang; ?>'">
+                </div>                <div class="info-card-base" onclick="location.href='baby_delivery.php?lang=<?php echo $current_lang; ?>'">
                     <div class="card-content-wrapper">
                         <div class="card-header-small">Had Your Baby?</div>
                         <div class="card-text-small">Log your baby's birth details to switch to post-birth tracking.</div>
                     </div>
                     <div class="article-link-text">LOG DELIVERY</div>
                 </div>
+                                <div class="info-card-base" onclick="location.href='doctor.php?lang=<?php echo $current_lang; ?>'">
+                    <div class="card-content-wrapper">
+                        <div class="card-header-small">Find Doctor</div>
+                        <div class="card-text-small">Get nearby doctors and specialists for safe delivery support.</div>
+                    </div>
+                    <div class="article-link-text">VIEW</div>
                 </div>
+
+
         </div>
     </div>
     <!-- Emergency top-bar alert script: paste after your existing JS, before </body> -->

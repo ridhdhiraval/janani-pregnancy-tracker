@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) NOT NULL UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(50) NOT NULL DEFAULT 'mother', -- mother, asha, doctor, admin
+  role VARCHAR(50) NOT NULL DEFAULT 'mother', -- mother, partner, asha, doctor, admin
   status TINYINT NOT NULL DEFAULT 1, -- 1=active,0=inactive
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -348,3 +348,22 @@ MySQL said: Documentation
 
 -- End of schema
 
+-- Mother <-> Partner link table
+CREATE TABLE IF NOT EXISTS partner_links (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  mother_user_id INT UNSIGNED NOT NULL,
+  partner_user_id INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_pair (mother_user_id, partner_user_id),
+  FOREIGN KEY (mother_user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (partner_user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS partner_week_content (
+  week INT UNSIGNED PRIMARY KEY,
+  p1 TEXT,
+  p2 TEXT,
+  image_url1 VARCHAR(255),
+  image_url2 VARCHAR(255),
+  image_url3 VARCHAR(255)
+) ENGINE=InnoDB;

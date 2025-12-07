@@ -7,8 +7,9 @@ $message_class = '';
 // Lekin yaad rakhein: Email aur Database ka kaam nahi karega jab tak ye files nahi milengi!
 
 try {
-    // Apne database connection file ko include karein. Apne path ke hisaab se badal dein.
-    @include 'db_connect.php'; 
+    // App ke PDO database connection ko include karein (JANANI/config/db.php)
+    @require_once __DIR__ . '/config/db.php';
+    @require_once __DIR__ . '/config/mail.php';
     
     // PHPMailer classes ko include karein. Apne path ke hisaab se badal dein.
     @require 'PHPMailer/src/Exception.php';
@@ -16,41 +17,49 @@ try {
     @require 'PHPMailer/src/SMTP.php';
     
     // Sirf tab chalao jab files mil gayi hon
-    if (class_exists('PHPMailer\PHPMailer\PHPMailer') && function_exists('mysqli_connect')) {
+    if (class_exists('PHPMailer\PHPMailer\PHPMailer') && isset($pdo) && $pdo instanceof PDO) {
         
         // Use classes only if they are defined
-        use PHPMailer\PHPMailer\PHPMailer;
-        use PHPMailer\PHPMailer\Exception;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
             $email = trim($_POST['email']);
-            
-            // Assume $conn is defined in db_connect.php
-            if (!isset($conn) || !$conn) {
-                throw new Exception("Database connection failed. Check db_connect.php");
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("Invalid email address");
             }
 
-            // 1. Email ko 'users' table mein check karein
-            $query = mysqli_query($conn, "SELECT id FROM users WHERE email='$email' LIMIT 1");
+            // 1. Email ko 'users' table mein check karein (PDO)
+            $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
 
-            if (mysqli_num_rows($query) > 0) {
+            if ($user) {
                 $token = bin2hex(random_bytes(32)); 
                 $expiry = date("Y-m-d H:i:s", strtotime('+30 minutes'));
-                mysqli_query($conn, "UPDATE users SET reset_token='$token', token_expiry='$expiry' WHERE email='$email'");
+                // Purane tokens ko clean karein
+                $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$user['id']]);
+                // Naya reset token save karein
+                $ins = $pdo->prepare('INSERT INTO password_resets (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)');
+                $ins->execute([$user['id'], $token, $expiry]);
 
                 $resetLink = "http://localhost/JANANI/reset_password.php?token=$token";
 
                 // 5. Email bhejein
-                $mail = new PHPMailer(true);
+                $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
                 // Configuration and sending logic...
                 $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com'; 
+                $mail->Host = $MAIL_HOST;
                 $mail->SMTPAuth = true;
-                $mail->Username = 'your_email@gmail.com'; 
-                $mail->Password = 'your_app_password';   
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = 587;
-                $mail->setFrom('your_email@gmail.com', 'RideNow Password Reset');
+                $mail->Username = $MAIL_USERNAME;
+                $mail->Password = $MAIL_PASSWORD;
+                if (strtolower($MAIL_SECURE) === 'ssl') {
+                    $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port = 465;
+                } else {
+                    $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port = $MAIL_PORT;
+                }
+                $mail->setFrom($MAIL_USERNAME, $MAIL_FROM_NAME . ' Password Reset');
                 $mail->addAddress($email);
                 $mail->isHTML(true);
                 $mail->Subject = 'RideNow: Password Reset Request';
@@ -68,7 +77,7 @@ try {
     } else {
         // Agar PHPMailer ya DB files load nahi hui (phir bhi design dikhega)
         $message_class = 'error';
-        $message_text = "⚠️ Configuration error: Email sending is disabled. Please check PHP includes.";
+        $message_text = "⚠️ Configuration error: Email/DB setup issue. Please check PHP includes and config/db.php.";
     }
 
 } catch (Exception $e) {
@@ -208,7 +217,7 @@ try {
             </form>
         <?php endif; ?>
         
-        <a href="login.php">Login Page Par Wapas Jaaein</a>
+        <a href="1signinsignup.php">Login Page Par Wapas Jaaein</a>
     </div>
 </body>
 </html>

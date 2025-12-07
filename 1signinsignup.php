@@ -51,20 +51,21 @@ $initial_class = $form_mode;
 
         html,
         body {
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow: auto;
         }
 
         .container {
             position: relative;
             min-height: 100vh;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .row {
             display: flex;
             flex-wrap: wrap;
-            height: 100vh;
+            min-height: 100vh;
+            height: auto;
             position: relative;
             z-index: 1;
         }
@@ -358,6 +359,23 @@ $initial_class = $form_mode;
                         <i class='bx bxs-lock-alt'></i>
                         <input id="password_confirm" type="password" placeholder="Confirm password" name="password_confirm" required>
                     </div>
+                    <div style="text-align:left;margin:.5rem 0 1rem 0;">
+                        <label style="font-weight:500"><input type="checkbox" id="create_partner" name="create_partner" value="1"> Create partner account now</label>
+                    </div>
+                    <div id="partner_fields" style="display:none;border:1px solid #eee;padding:12px;border-radius:8px;">
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input id="partner_name_up_hidden" type="text" placeholder="Partner full name" name="partner_name_up">
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bx-mail-send'></i>
+                            <input id="partner_email_up_hidden" type="email" placeholder="Partner email" name="partner_email_up">
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input id="partner_password_up_hidden" type="password" placeholder="Partner password" name="partner_password_up">
+                        </div>
+                    </div>
                     <button type="submit" name="signup_submit">
                         Sign up
                     </button>
@@ -430,6 +448,36 @@ $initial_class = $form_mode;
         </div>
     </div>
 
+<!-- Partner Modal -->
+<div id="partnerModal" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">Partner Account</div>
+    <div class="modal-body">
+      <table class="modal-table">
+        <tbody>
+          <tr>
+            <th style="width:180px;">Full name</th>
+            <td><input id="partner_name_modal" type="text" placeholder="e.g., Rahul Verma" style="width:100%;padding:.6rem 1rem;border:1px solid #ddd;border-radius:8px;"></td>
+          </tr>
+          <tr>
+            <th>Email</th>
+            <td><input id="partner_email_modal" type="email" placeholder="partner@example.com" style="width:100%;padding:.6rem 1rem;border:1px solid #ddd;border-radius:8px;"></td>
+          </tr>
+          <tr>
+            <th>Password</th>
+            <td><input id="partner_password_modal" type="password" placeholder="min 6 chars" style="width:100%;padding:.6rem 1rem;border:1px solid #ddd;border-radius:8px;"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="helper">On save, these details link a partner account to your profile.</div>
+    </div>
+    <div class="modal-footer">
+      <button id="partnerCancelBtn" class="btn-modal btn-cancel">Cancel</button>
+      <button id="partnerSaveBtn" class="btn-modal btn-save">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
     let container = document.getElementById('container');
 
@@ -467,6 +515,19 @@ $initial_class = $form_mode;
         border-color: #d93025 !important;
     }
 </style>
+<style>
+    .modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9999; align-items:center; justify-content:center; }
+    .modal-card{ width:95%; max-width:600px; background:#fff; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.2); overflow:hidden; }
+    .modal-header{ padding:14px 18px; border-bottom:1px solid #eee; font-weight:700; color:#333; }
+    .modal-body{ padding:16px 18px; }
+    .modal-footer{ padding:12px 18px; border-top:1px solid #eee; display:flex; justify-content:flex-end; gap:10px; }
+    .modal-table{ width:100%; border-collapse:collapse; }
+    .modal-table th, .modal-table td{ text-align:left; padding:10px; border-bottom:1px solid #f0f0f0; font-size:14px; }
+    .btn-modal{ border:none; border-radius:8px; padding:8px 12px; cursor:pointer; }
+    .btn-cancel{ background:#f3f4f6; color:#111; }
+    .btn-save{ background:#F8B4C3; color:#fff; font-weight:700; }
+    .helper{ font-size:12px; color:#6b7280; margin-top:6px; }
+</style>
 
 <script>
     $(function(){
@@ -503,6 +564,44 @@ $initial_class = $form_mode;
             submitHandler: function(form) {
                 // Optionally perform additional checks or show a loading state
                 form.submit();
+            }
+        });
+
+        $("#create_partner").on('change', function(){
+            const on = this.checked;
+            if(on){
+                document.getElementById('partnerModal').style.display = 'flex';
+            } else {
+                document.getElementById('partnerModal').style.display = 'none';
+                document.getElementById('partner_fields').style.display = 'none';
+                $("#partner_name_up_hidden").val('');
+                $("#partner_email_up_hidden").val('');
+                $("#partner_password_up_hidden").val('');
+            }
+        });
+
+        $("#partnerCancelBtn").on('click', function(){
+            document.getElementById('partnerModal').style.display = 'none';
+            const cb = document.getElementById('create_partner');
+            cb.checked = false;
+            document.getElementById('partner_fields').style.display = 'none';
+        });
+
+        $("#partnerSaveBtn").on('click', function(){
+            const name = $("#partner_name_modal").val().trim();
+            const email = $("#partner_email_modal").val().trim();
+            const pass = $("#partner_password_modal").val();
+            if(email && pass && pass.length >= 6){
+                $("#partner_name_up_hidden").val(name);
+                $("#partner_email_up_hidden").val(email);
+                $("#partner_password_up_hidden").val(pass);
+                // Keep partner fields hidden to avoid layout shift
+                document.getElementById('partner_fields').style.display = 'none';
+                document.getElementById('partnerModal').style.display = 'none';
+                const submitBtn = document.querySelector('#signupForm button[type="submit"]');
+                if (submitBtn) submitBtn.scrollIntoView({behavior:'smooth', block:'center'});
+            } else {
+                alert('Please enter a valid partner email and a password of at least 6 characters.');
             }
         });
 

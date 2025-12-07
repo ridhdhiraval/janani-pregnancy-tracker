@@ -34,6 +34,7 @@ register_shutdown_function(function() {
 require __DIR__ . '/PHPMailer/src/Exception.php';
 require __DIR__ . '/PHPMailer/src/PHPMailer.php';
 require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/config/mail.php';
 
 // ✅ Database connection
 $conn = new mysqli('localhost', 'root', '', 'janani_db');
@@ -85,14 +86,19 @@ $stmt->close();
 try {
     $mail = new PHPMailer(true);
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com';
+    $mail->Host = $MAIL_HOST;
     $mail->SMTPAuth = true;
-    $mail->Username = 'km208337@gmail.com';  // your Gmail
-    $mail->Password = 'jmyn ezhq nvds yumn'; // your app password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+    $mail->Username = $MAIL_USERNAME;
+    $mail->Password = $MAIL_PASSWORD;
+    if (strtolower($MAIL_SECURE) === 'ssl') {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
+    } else {
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = $MAIL_PORT;
+    }
 
-    $mail->setFrom($mail->Username, 'JANANI Alert System');
+    $mail->setFrom($MAIL_USERNAME, 'JANANI Alert System');
     $mail->addAddress('ridhdhiraval2005@gmail.com'); // receiver email
     $mail->isHTML(true);
     $mail->Subject = '🚨 Emergency Alert from JANANI';
@@ -102,7 +108,26 @@ try {
 
     echo json_encode(['status' => 'success', 'message' => 'Alert sent successfully!']);
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo]);
+    try {
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = $MAIL_HOST;
+        $mail->SMTPAuth = true;
+        $mail->Username = $MAIL_USERNAME;
+        $mail->Password = $MAIL_PASSWORD;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port = 465;
+        $mail->setFrom($MAIL_USERNAME, 'JANANI Alert System');
+        $mail->addAddress('ridhdhiraval2005@gmail.com');
+        $mail->isHTML(true);
+        $mail->Subject = '🚨 Emergency Alert from JANANI';
+        $mail->Body = nl2br($message);
+        $mail->SMTPOptions = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]];
+        $mail->send();
+        echo json_encode(['status' => 'success', 'message' => 'Alert sent successfully!']);
+    } catch (Exception $e2) {
+        echo json_encode(['status' => 'error', 'message' => 'Message could not be sent. Mailer Error: ' . ($mail->ErrorInfo ?: $e2->getMessage())]);
+    }
 }
 
 exit;
