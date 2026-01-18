@@ -1,134 +1,87 @@
 Janani – Pregnancy Tracker
-
 Janani is a web-based pregnancy tracking system designed to support expecting mothers throughout their pregnancy journey. The system helps track weekly progress, manage medical records, set reminders, and access important information easily.
 
-Features
-Pregnancy Progress Tracking
+Panels & Features
 
-Week-by-week updates
+User Panel
 
-Fetal development information
+Language selection for better accessibility
+Pregnancy tracking using estimated date and expected due date
+Personal and medical details management
+One-click emergency alert system
+Real-time notifications and alerts
+Email notifications using PHPMailer
+Responsive and user-friendly interface
 
-Care and health guidelines
+Family Panel
 
-Medical Records
+View pregnancy and health updates
+Receive emergency alerts and notifications
+Track user status during emergencies
 
-Add and manage checkups
+Doctor Panel
 
-Store medication details
+Access patient profiles and medical records
+View emergency alerts
+Manage medical updates and responses
 
-Save doctor’s notes
+Admin Panel
 
-Reminders and Alerts
+Manage users, doctors, and system data
+Monitor emergencies and notifications
+System control and data overview
 
-Appointment reminders
+Backend System
 
-Medicine reminders
+Authentication and authorization
+Database management
+Application logic and API handling
 
-Pregnancy milestone alerts
+Team & Contributions
 
-Support and Assistance
+Ridhdhi Raval:
+User Panel Frontend Development
+Family Panel Frontend Development
+PHPMailer Email Configuration
 
-Connect with ASHA workers or doctors
+Komal Mishra:
+Emergency Alert and Notification System
+User Panel Backend Development and Database Management
+Family Panel Backend Development and Database Management
 
-Emergency support section
-
-Informational Content
-
-Diet plans
-
-Do’s and Don’ts
-
-Symptom guidance
-
-Educational articles
-
-User Interface
-
-Clean and simple layout
-
-Mobile-friendly pages
-
-Lightweight and fast
-
-Tech Stack
-Frontend
-
-HTML
-
-CSS
-
-JavaScript
-
-Bootstrap
-
-Backend
-
-PHP
-
-MySQL
-
-XAMPP
-
-Tools
-
-VS Code
-
-Git and GitHub
-
-Project Structure
-JANANI/
-│ index.php
-│ dashboard.php
-│ medical_records.php
-│ add_checkup.php
-│ support_faq.php
-│
-├── css/
-├── js/
-├── assets/
-├── includes/
-└── database/
-      └── janani.sql
+Hensy Patel:
+Admin Panel Frontend Development
+Admin Panel Backend Development and Database Management
 
 
-(Folder names may vary based on your project.)
+Diya Tandel:
+Doctor Panel Frontend Development
+Doctor Panel Backend Development and Database Management
 
-Installation & Setup
-1. Clone the repository
-git clone https://github.com/ridhdhiraval/janani-pregnancy-tracker.git
+Technology Stack
 
-2. Move project to XAMPP htdocs
-C:\xampp\htdocs\JANANI
+Frontend: HTML, CSS, JavaScript
+Backend: PHP
+Database: MySQL
+Email Service: PHPMailer
+Version Control: Git & GitHub
 
-3. Import database
+How to Run the Project (Local Setup):
 
-Open phpMyAdmin
+Clone the repository
+git clone <repository-url>
+Move the project folder to your local server directory
+XAMPP: htdocs
+Create a MySQL database and import the provided .sql file
+Configure database connection
+Update database name, username, and password in backend config files
+Configure PHPMailer
+Add SMTP host, email credentials, and port
+Start Apache and MySQL services
+Open the project in your browser
+http://localhost/janani
+Project Type
 
-Create a new database named: janani
+Team-based academic project focused on maternal safety, emergency response, and healthcare support.
 
-Import the file janani.sql
-
-4. Run the application
-
-Open browser and go to:
-
-http://localhost/JANANI/
-
-Future Enhancements
-
-Voice assistance
-
-Android/iOS app version
-
-GPS-based nearest hospital locator
-
-Push notifications
-
-Uploading and managing medical scans
-
-Improved user authentication
-
-License
-
-This project is open-source and available for learning and development purposes.
+Learning Outcomes
